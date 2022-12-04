@@ -88,7 +88,7 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 
-discovery = require('./bootstrap/discovery.js');
+discovery = require('./discovery/discovery.js');
 discovery.startNode(port);
 
 
