@@ -23,7 +23,7 @@ const ip = options.ip;
 const debug = options.debug;
 
 
-var app = express();
+const app = express();
 
 // set port to port
 process.env.PORT = port;
@@ -84,4 +84,11 @@ app.use(function(err, req, res, next) {
 
 
 
+//module.exports = app;
 module.exports = app;
+
+
+discovery = require('./bootstrap/discovery.js');
+discovery.startNode(port);
+
+
