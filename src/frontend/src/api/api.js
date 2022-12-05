@@ -30,6 +30,8 @@ export function postRequest(url, body) {
                 Context.unblockPage();
             })
             .catch(err => {
+                console.log(err);
+                console.log(Context.toast);
                 Context.toast.current.show({ severity: 'error', summary: err.message, life: 3000 });
                 reject(err.data)
                 Context.unblockPage();
