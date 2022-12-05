@@ -26,7 +26,7 @@ async function startNode(port) {
 			peerDiscovery: {
 				autoDial: true,
 				[BOOTSTRAP.tag]: {
-					enabled: true,
+					enabled: false,
 					list: bootstraperNodes,
 				},
 				[MDNS.tag]: {
