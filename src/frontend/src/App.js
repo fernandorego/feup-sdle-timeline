@@ -8,7 +8,7 @@ import { Context } from './context/context';
 import Navbar from './common/Navbar';
 import { Toast } from 'primereact/toast';
 import { BlockUI } from 'primereact/blockui';
-import { CreatePost } from './timeline/CreatePost';
+import { CreatePostForm } from './timeline/CreatePost';
 
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
         <Toast ref={toast} />
         <Navbar />
         <div className="d-flex h-100 justify-content-center align-items-center">
-        <CreatePost />
+        <CreatePostForm />
         </div>
       </BlockUI>
     </div>
