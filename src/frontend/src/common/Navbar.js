@@ -7,6 +7,7 @@ export default function Navbar() {
 
     const [state, setState] = useState({
         serverUrl: Context.serverUrl,
+        username: Context.username
     });
 
     const onServerUrlChange = (e) => {
@@ -36,7 +37,7 @@ export default function Navbar() {
                     value={state.serverUrl} />
             }
             
-            end={<Button label="Logout" icon="pi pi-power-off" />}
+            end={<Button label={state.username} disabled/>}
         />
     );
 
