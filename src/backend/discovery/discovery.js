@@ -5,9 +5,12 @@ const MPLEX = require("libp2p-mplex");
 const MDNS = require("libp2p-mdns");
 const SECIO = require("libp2p-secio");
 const PEER_ID = require("peer-id");
-
+const BOOTSTRAP = require("libp2p-bootstrap");
+const debug = require('debug')('libp2p-bootstrap');
 async function startNode(port) {
+	const bootstraperNodes = require('./bootstrap');
 	node = await LIB_P2P.create({
+
 		peerId: await PEER_ID.create({ bits: 1024 }),
 		addresses: {
 			listen: ["/ip4/0.0.0.0/tcp/" + (port + 1)],
@@ -16,16 +19,19 @@ async function startNode(port) {
 			transport: [TCP],
 			streamMuxer: [MPLEX],
 			connEncryption: [SECIO],
-			peerDiscovery: [MDNS],
+			peerDiscovery: [BOOTSTRAP, MDNS],
 			dht: DHT,
 		},
 		config: {
 			peerDiscovery: {
 				autoDial: true,
-				mdns: {
-					interval: 20e3,
-					enabled: true,
+				[BOOTSTRAP.tag]: {
+					enabled: false,
+					list: bootstraperNodes,
 				},
+				[MDNS.tag]: {
+					enabled: true,
+				}
 			},
 			dht: {
 				enabled: true,
@@ -38,8 +44,7 @@ async function startNode(port) {
 	});
 	node.connectionManager.on("peer:connect", (connection) => {
 		console.log(
-			"Connection established to:",
-			connection.remotePeer.toB58String()
+			"Connection established to:"
 		);
 	});
 	node.on("peer:disconnect", (peer) => {

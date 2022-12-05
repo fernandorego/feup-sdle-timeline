@@ -14,6 +14,7 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "libp2p": "^0.35.8",
+    "libp2p-bootstrap": "^0.14.0",
     "libp2p-kad-dht": "^0.28.6",
     "libp2p-mdns": "^0.18.0",
     "libp2p-mplex": "^0.10.7",
