@@ -20,11 +20,11 @@ export function getRequest(url, params) {
     });
 }
 
-export function postRequest(url, params) {
+export function postRequest(url, body) {
     
     return new Promise((resolve, reject) => {
-        Context.blockDialog();
-        axios.post(url, params)
+        Context.blockPage();
+        axios.post(url, body)
             .then(res => {
                 resolve(res.data);
                 Context.unblockPage();
