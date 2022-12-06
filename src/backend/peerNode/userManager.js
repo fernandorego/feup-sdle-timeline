@@ -4,7 +4,7 @@ function saveUser(node, username, user){
     const usernameEncoded = encoder.encode(username);
     const userEncoded = encoder.encode(user);
     try {
-        node.contentRouting.provide(encoder.createCID(username));
+        node.contentRouting.put(encoder.createCID(username), user);
     } catch(error){
         console.error(`Error saving user: ${username}` + error);
     }

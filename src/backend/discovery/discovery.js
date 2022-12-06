@@ -13,7 +13,7 @@ async function startNode(port) {
 
 		peerId: await PEER_ID.create({ bits: 1024 }),
 		addresses: {
-			listen: ["/ip4/0.0.0.0/tcp/" + (port + 1)],
+			listen: ["/ip4/0.0.0.0/tcp/0"],
 		},
 		modules: {
 			transport: [TCP],
