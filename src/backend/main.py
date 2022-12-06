@@ -1,8 +1,10 @@
 import argparse
 import logging
 import asyncio
+import threading
 
 from kademlia.network import Server
+from server.app import startServer
 
 BOOTSTRAP_IP = "127.0.0.1"
 BOOTSTRAP_PORT = 8000
@@ -58,19 +60,29 @@ def create_bootstrap_node():
         server.stop()
         loop.close()
 
-def setup_node(server):
-    pass
-
-def main():
-    args = parse_arguments()
-
+def create_node(args):
     if args.ip and args.port:
         connect_to_bootstrap_node(args)
     else:
         create_bootstrap_node()
-    
-    setup_node(server)
+    return
 
+def setup_node(args):
+    if args.ip and args.port:
+        startServer(args.ip, args.port)
+    else:
+        startServer(BOOTSTRAP_IP, BOOTSTRAP_PORT)
+    return
+
+def main():
+    args = parse_arguments()
+
+    t1 = threading.Thread(target=setup_node, args=(args,))
+    t1.start()
+
+    create_node(args)
+
+    t1.join()
 
 if __name__ == "__main__":
     main()

@@ -11,12 +11,12 @@ export const CreatePostForm = () => {
         event.preventDefault();
 		const url = Context.serverUrl + "/posts/create";
 		postRequest(url, {
-			username: "nando",
-			tweet: "tweet test",
+			username: Context.username,
+			post: value,
 		}).then((res) => {
 			Context.toast.current.show({
 				severity: "success",
-				summary: res,
+				summary: res.message,
 				life: 3000,
 			});
 		});

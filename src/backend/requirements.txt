@@ -1,1 +1,2 @@
 kademlia
+fastapi[all]
