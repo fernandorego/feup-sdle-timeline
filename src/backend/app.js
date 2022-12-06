@@ -28,6 +28,7 @@ const app = express();
 process.env.PORT = port;
 
 const cors = require("cors");
+const peerNode = require("./peerNode/peerNode");
 
 const whitelist = ["http://localhost:3000", "http://127.0.0.1:3000"];
 const corsOptions = {
@@ -78,5 +79,8 @@ app.use(function (err, req, res, next) {
 //module.exports = app;
 module.exports = app;
 
-discovery = require("./discovery/discovery.js");
-discovery.startNode(port);
+const peer_node = require('./peerNode/peerNode');
+peer_node.initNode(port);
+
+
+
