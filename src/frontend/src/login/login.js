@@ -19,7 +19,7 @@ export default function Login({ setUsername }) {
 		}).then((res) => {
 			Context.toast.current.show({
 				severity: "success",
-				summary: res,
+				summary: res.message,
 				life: 3000,
 			});
             setUsername(username);
@@ -42,8 +42,4 @@ export default function Login({ setUsername }) {
             </div>
         </div>
     );
-    
-    Login.propTypes = {
-        setUsername: PropTypes.func.isRequired
-    }
 }
