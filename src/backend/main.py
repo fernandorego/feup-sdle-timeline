@@ -78,11 +78,10 @@ def main():
     args = parse_arguments()
 
     t1 = threading.Thread(target=setup_node, args=(args,))
+    t1.daemon = True
     t1.start()
 
     create_node(args)
-
-    t1.join()
 
 if __name__ == "__main__":
     main()
