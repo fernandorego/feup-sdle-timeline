@@ -30,7 +30,8 @@ def parse_arguments():
     return parser.parse_args()
 
 def create_node(port):
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    server.loop = loop
     loop.set_debug(True)
 
     loop.run_until_complete(server.listen(port))
@@ -55,11 +56,14 @@ def setup_node(port, server):
 def main():
     args = parse_arguments()
     port = args.port if args.port else BOOTSTRAP_PORT
+    
     t1 = threading.Thread(target=setup_node, args=(port - 3000, server))
     t1.daemon = True
     t1.start()
 
     create_node(port)
+
+    
 
 if __name__ == "__main__":
     main()

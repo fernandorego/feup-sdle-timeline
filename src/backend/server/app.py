@@ -37,8 +37,9 @@ class Login(BaseModel):
 @api.post("/login/")
 async def login(login: Login):
     global server
+    print(login.username)
     username = login.username
-    user = await user_manager.getOrCreateUser(server, username)
+    user = user_manager.getOrCreateUser(server, username)
     return {"message": "Login successful as " + login.username,
             'user': json.dumps(user.__dict__, default=vars)}
 

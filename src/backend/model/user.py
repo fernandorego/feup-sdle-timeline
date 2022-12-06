@@ -7,11 +7,12 @@ class User:
         self.posts = []
         self.following = []
 
-    def fromJson(self, json):
-        self.username = json['username']
-        self.password = json['password']
-        self.posts = json['posts']
-        self.following = json['following']
+    def fromJson(json):
+        user = User(json['username'])
+        user.password = json['password']
+        user.posts = json['posts']
+        user.following = json['following']
+        return user
 
     def toJson(self):
         return {
