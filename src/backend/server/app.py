@@ -12,7 +12,7 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-def startServer(ip, port):
+def start_api(ip, port):
     import uvicorn
     uvicorn.run(api, host=ip, port=port)
 
