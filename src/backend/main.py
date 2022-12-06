@@ -56,10 +56,7 @@ def setup_node(port, server):
 def main():
     args = parse_arguments()
     port = args.port if args.port else BOOTSTRAP_PORT
-    
-    t1 = threading.Thread(target=setup_node, args=(port - 3000, server))
-    t1.daemon = True
-    t1.start()
+    threading.Thread(target=setup_node, args=(port - 3000, server), daemon=True).start()
 
     create_node(port)
 

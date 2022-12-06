@@ -9,7 +9,6 @@ def set_dht_value(server : Server, key : str, value) :
     
 def get_dht_value(server : Server, key : str) :
     value = asyncio.run_coroutine_threadsafe(server.get(key), server.loop).result()
-    
     print(f'Getting {key} = {value}')
     if value is None:
         return None
