@@ -1,8 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from kademlia.network import Server
+import controller.user_manager as user_manager
+import json
+import uvicorn
 
 api = FastAPI()
+server = None
 
 api.add_middleware(
     CORSMiddleware,
@@ -12,9 +17,15 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-def start_api(ip, port):
-    import uvicorn
+def start_api(ip : str, port : int, server_arg : Server):
+    global server
+    server = server_arg
+    print('server ========================')
+    print(server)
+    
     uvicorn.run(api, host=ip, port=port)
+    
+
 
 @api.get("/")
 async def main():
@@ -25,8 +36,11 @@ class Login(BaseModel):
 
 @api.post("/login/")
 async def login(login: Login):
-    print(login.username)
-    return {"message": "Login successful as " + login.username}
+    global server
+    username = login.username
+    user = await user_manager.getOrCreateUser(server, username)
+    return {"message": "Login successful as " + login.username,
+            'user': json.dumps(user.__dict__, default=vars)}
 
 class Post(BaseModel):
     username: str
