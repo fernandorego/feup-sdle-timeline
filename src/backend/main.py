@@ -2,6 +2,7 @@ import argparse
 import logging
 import asyncio
 import threading
+import time
 
 from kademlia.network import Server
 from server.app import start_api
@@ -29,12 +30,13 @@ def parse_arguments():
     return parser.parse_args()
 
 def create_node(port):
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    server.loop = loop
     loop.set_debug(True)
 
     loop.run_until_complete(server.listen(port))
     if port != BOOTSTRAP_PORT:
-        bootstrap_node = (BOOTSTRAP_IP, port)
+        bootstrap_node = (BOOTSTRAP_IP, BOOTSTRAP_PORT)
         loop.run_until_complete(server.bootstrap([bootstrap_node]))
     try:
         loop.run_forever()
@@ -46,19 +48,19 @@ def create_node(port):
     print('Node created')
     return
 
-def setup_node(port):
+def setup_node(port, server):
     ip = '127.0.0.1'
-    start_api(ip, port)
+    start_api(ip, port, server)
     
 
 def main():
     args = parse_arguments()
     port = args.port if args.port else BOOTSTRAP_PORT
-    t1 = threading.Thread(target=setup_node, args=(port - 3000, ))
-    t1.daemon = True
-    t1.start()
+    threading.Thread(target=setup_node, args=(port - 3000, server), daemon=True).start()
 
     create_node(port)
+
+    
 
 if __name__ == "__main__":
     main()

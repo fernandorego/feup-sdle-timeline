@@ -1,6 +1,8 @@
 .App {
   text-align: center;
   height: 100%;
+  overflow: auto;
+  background-color: var(--surface-0);
 }
 
 body{
