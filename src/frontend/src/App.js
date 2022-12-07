@@ -24,7 +24,7 @@ function App(props) {
 	Context.username = username;
 
 	if (!username) {
-		return <div class="App h-100 w-100">
+		return <div className="App h-100 w-100">
 			<Navbar />
 			<BlockUI
 				blocked={blockedPanel}
@@ -40,7 +40,7 @@ function App(props) {
 				fullScreen
 			>
 					<Toast ref={toast} />
-					<div class="h-100 w-100 d-flex justify-content-center align-items-center">
+					<div className="h-100 w-100 d-flex justify-content-center align-items-center">
 						<Login username={Context.username} setUsername={setUsername} />
 					</div>
 			</BlockUI>

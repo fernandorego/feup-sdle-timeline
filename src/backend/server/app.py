@@ -41,7 +41,8 @@ async def login(login: LoginAPI):
     # TODO: timeline
     # timeline = user_manager.getTimeline(user)
     return {"message": "Login successful as " + login.username,
-            'user': json.dumps(user.__dict__, default=vars)}
+            'user': json.dumps(user.__dict__, default=vars),
+            'timeline': json.dumps(user.toJson()['timeline'], default=vars)}
 
 class PostAPI(BaseModel):
     username: str
