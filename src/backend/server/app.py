@@ -51,12 +51,34 @@ class PostAPI(BaseModel):
 async def login(post: PostAPI):
     user = user_manager.getUser(server, post.username)
     if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="User not logged in")
 
     post = Post(post.post)
     user.posts.append(post)
     user_manager.setUser(server, user.username, user)
     return {"message": "Post successfully published"}
+
+
+class FollowAPI(BaseModel):
+    username: str
+    userToFollow: str
+
+@api.post("/follow/") # TODO: need testing
+async def follow(follow: PostAPI):
+    user = user_manager.getUser(server, follow.username)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not logged in")
+
+    # Check if user exists
+    userToFollow = user_manager.getUser(server, follow.userToFollow)
+
+    if userToFollow is None:
+        raise HTTPException(status_code=404, detail="User to follow not found")
+
+    # Add username to followers
+    user.following.append(follow.userToFollow)
+    user_manager.setUser(server, user.username, user)
+    return {"message": "User successfully followed"}
 
 @api.get("/hello")
 async def main():
