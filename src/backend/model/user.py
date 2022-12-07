@@ -1,4 +1,4 @@
-import json
+from model.post import Post
 class User:
 
     def __init__(self, username : str, password : str = ''):
@@ -10,7 +10,7 @@ class User:
     def fromJson(json):
         user = User(json['username'])
         user.password = json['password']
-        user.posts = json['posts']
+        user.posts = [Post(post['post'], post['timestamp']) for post in json['posts']]
         user.following = json['following']
         return user
 
@@ -18,7 +18,7 @@ class User:
         return {
             'username': self.username,
             'password': self.password,
-            'posts': self.posts,
+            'posts': [post.toJson() for post in self.posts],
             'following': self.following
         }
 
