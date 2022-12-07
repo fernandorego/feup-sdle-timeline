@@ -24,18 +24,19 @@ export const CreatePostForm = () => {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<div className="card">
-				<h5>Auto Resize</h5>
+			<div >
 				<InputTextarea
 					value={value}
 					onChange={(e) => setValue(e.target.value)}
+					placeholder="What's on your mind?"
+					className="mt-4"
 					rows={5}
 					cols={30}
 					autoResize
 				/>
 			</div>
 
-			<div className="d-flex h-100 justify-content-center align-items-center">
+			<div className="d-flex h-100 justify-content-center align-items-center mt-2">
 				<Button type="submit" label="Submit" />
 			</div>
 		</form>

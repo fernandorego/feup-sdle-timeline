@@ -41,7 +41,7 @@ async def login(login: LoginAPI):
     username = login.username
     user = user_manager.getOrCreateUser(server, username)
     return {"message": "Login successful as " + login.username,
-            'user': json.dumps(user.__dict__, default=vars)}
+            'user': json.dumps(user.toJson(), default=vars)}
 
 class PostAPI(BaseModel):
     username: str

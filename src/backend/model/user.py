@@ -19,6 +19,7 @@ class User:
             'username': self.username,
             'password': self.password,
             'posts': [post.toJson() for post in self.posts],
+            'timeline' : [post.toJson() for post in self.posts],
             'following': self.following
         }
 

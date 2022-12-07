@@ -17,6 +17,7 @@ export default function Login({ setUsername }) {
 		postRequest(url, {
 			username: username,
 		}).then((res) => {
+            Context.user = JSON.parse(res.user);
 			Context.toast.current.show({
 				severity: "success",
 				summary: res.message,
@@ -28,7 +29,6 @@ export default function Login({ setUsername }) {
 
     return (
         <div>
-            <Navbar />
             <div className="d-flex h-100 justify-content-center align-items-center">
                 <form onSubmit={handleSubmit}>
                     <div className="card">
