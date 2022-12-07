@@ -1,5 +1,4 @@
-import { React, useState } from 'react';
-import Navbar from "./../common/Navbar";
+import { React } from 'react';
 import { CreatePostForm } from "./CreatePost";
 import { Context } from "./../context/context";
 import { Post } from "./Post";
