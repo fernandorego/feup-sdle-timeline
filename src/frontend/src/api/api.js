@@ -2,9 +2,6 @@ import axios from 'axios';
 import { Context } from '../context/context';
 
 export function getRequest(url, params) {
-
-    
-    
     return new Promise((resolve, reject) => {
         Context.blockPage();
         axios.get(url, {
@@ -13,7 +10,7 @@ export function getRequest(url, params) {
             resolve(res.data);
             Context.unblockPage();
         }).catch(err => {
-            Context.toast.current.show({ severity: 'error', summary: err.message, life: 3000 });
+            Context.toast.current.show({ severity: 'error', summary: (err.response.status == 404) ? err.response.data.detail : err.message, life: 3000 });
             reject(err);
             Context.unblockPage();
         });
@@ -21,7 +18,6 @@ export function getRequest(url, params) {
 }
 
 export function postRequest(url, body) {
-    
     return new Promise((resolve, reject) => {
         Context.blockPage();
         axios.post(url, body)
@@ -30,9 +26,7 @@ export function postRequest(url, body) {
                 Context.unblockPage();
             })
             .catch(err => {
-                console.log(err);
-                console.log(Context.toast);
-                Context.toast.current.show({ severity: 'error', summary: err.message, life: 3000 });
+                Context.toast.current.show({ severity: 'error', summary: (err.response.status == 404) ? err.response.data.detail : err.message, life: 3000 });
                 reject(err.data)
                 Context.unblockPage();
             });

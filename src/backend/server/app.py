@@ -25,8 +25,6 @@ def start_api(ip : str, port : int, server_arg : Server):
     print(server)
     
     uvicorn.run(api, host=ip, port=port)
-    
-
 
 @api.get("/")
 async def main():
@@ -40,6 +38,7 @@ async def login(login: LoginAPI):
     global server
     username = login.username
     user = user_manager.getOrCreateUser(server, username)
+    # timeline = user_manager.getTimeline(user)
     return {"message": "Login successful as " + login.username,
             'user': json.dumps(user.__dict__, default=vars)}
 
