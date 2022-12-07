@@ -6,6 +6,7 @@ import controller.user_manager as user_manager
 from model.post import Post
 import json
 import uvicorn
+from datetime import datetime
 
 api = FastAPI()
 server = None
@@ -49,7 +50,7 @@ class PostAPI(BaseModel):
     post: str
 
 @api.post("/posts/create/")
-async def login(post: PostAPI):
+async def createPost(post: PostAPI):
     user = user_manager.getUser(server, post.username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
