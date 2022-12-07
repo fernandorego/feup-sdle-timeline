@@ -10,7 +10,7 @@ export function getRequest(url, params) {
             resolve(res.data);
             Context.unblockPage();
         }).catch(err => {
-            Context.toast.current.show({ severity: 'error', summary: (err.response.status == 404) ? err.response.data.detail : err.message, life: 3000 });
+            Context.toast.current.show({ severity: 'error', summary: (err.response != undefined && err.response.status == 404) ? err.response.data.detail : err.message, life: 3000 });
             reject(err);
             Context.unblockPage();
         });
@@ -26,7 +26,7 @@ export function postRequest(url, body) {
                 Context.unblockPage();
             })
             .catch(err => {
-                Context.toast.current.show({ severity: 'error', summary: (err.response.status == 404) ? err.response.data.detail : err.message, life: 3000 });
+                Context.toast.current.show({ severity: 'error', summary: (err.response != undefined && err.response.status == 404) ? err.response.data.detail : err.message, life: 3000 });
                 reject(err.data)
                 Context.unblockPage();
             });
