@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from kademlia.network import Server
@@ -33,17 +33,25 @@ async def main():
 
 class LoginAPI(BaseModel):
     username: str
+    password: str
 
-@api.post("/login/")
-async def login(login: LoginAPI):
+@api.post("/login/", status_code=200)
+async def login(login: LoginAPI, response: Response):
     global server
     username = login.username
-    user = user_manager.getOrCreateUser(server, username)
-    # TODO: timeline
-    # timeline = user_manager.getTimeline(user)
-    return {"message": "Login successful as " + login.username,
-            'user': user.__dict__,
-            'timeline': user.toJson()['timeline']}
+    password = login.password
+    user, private_key = user_manager.getOrCreateUser(server, username, password)
+
+    if user == None and private_key == None:
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        raise HTTPException(status_code=401, detail="Cannot follow yourself")
+    else:
+        # TODO: timeline
+        # timeline = user_manager.getTimeline(user)
+        return {"message": "Login successful as " + login.username,
+                'user': json.dumps(user.__dict__, default=vars),
+                'timeline': json.dumps(user.toJson()['timeline'], default=vars),
+                'private_key': private_key}
 
 class PostAPI(BaseModel):
     username: str
