@@ -2,7 +2,7 @@ from model.post import Post
 class User:
     def __init__(self, username : str, public_key : str, password : str):
         self.username = username
-        self.password = password # ignored for now
+        self.password = password
         self.public_key = public_key
         self.posts = []
         self.following = []

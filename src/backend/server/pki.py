@@ -35,7 +35,7 @@ def sign_message(message : str, private_key : str):
 
     signature = signer.sign(hashed_message)
 
-    return message, signature
+    return signature
 
 def verify_signature(message: str, public_key : str, signature : bytes) -> bool:
     '''

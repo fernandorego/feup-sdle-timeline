@@ -1,9 +1,10 @@
-from fastapi import FastAPI, HTTPException, Response, status
+from fastapi import FastAPI, HTTPException, Response, status, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from kademlia.network import Server
 import controller.user_manager as user_manager
 from model.post import Post
+import server.pki as pki
 import json
 import uvicorn
 from datetime import datetime
@@ -35,26 +36,31 @@ class LoginAPI(BaseModel):
     username: str
     password: str
 
-@api.post("/login/", status_code=200)
-async def login(login: LoginAPI, response: Response):
+@api.post("/login/")
+async def login(login: LoginAPI):
     global server
     username = login.username
     password = login.password
     user, private_key = user_manager.getOrCreateUser(server, username, password)
 
     if user == None and private_key == None:
-        response.status_code = status.HTTP_401_UNAUTHORIZED
-        raise HTTPException(status_code=401, detail="Cannot follow yourself")
+        raise HTTPException(status_code=401, detail="Invalid Password")
+    # User already created 
+    elif private_key == None:
+        return {"message": "Login successful as " + login.username,
+                'user': json.dumps(user.__dict__, default=vars),
+                'timeline': json.dumps(user.toJson()['timeline'], default=vars)}
     else:
         # TODO: timeline
         # timeline = user_manager.getTimeline(user)
         return {"message": "Login successful as " + login.username,
                 'user': json.dumps(user.__dict__, default=vars),
                 'timeline': json.dumps(user.toJson()['timeline'], default=vars),
-                'private_key': private_key}
+                'private_key': private_key.decode(encoding='utf-8')}
 
 class PostAPI(BaseModel):
     username: str
+    private_key : str
     post: str
 
 @api.post("/posts/create/")
@@ -63,11 +69,20 @@ async def createPost(post: PostAPI):
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
 
-    post = Post(post.post)
-    user.posts.insert(0, post)
-    user_manager.setUser(server, user.username, user)
-    return {"message": "Post successfully published",
-            'post': post.__dict__}
+    # Is post authentic (hammer-time should be signed in the front-end if we have time we will do it)
+
+    signature = pki.sign_message(post.post,post.private_key)
+
+    verify_signature = pki.verify_signature(post.post, user.public_key, signature)
+
+    if verify_signature:
+        post = Post(post.post)
+        user.posts.insert(0, post)
+        user_manager.setUser(server, user.username, user)
+        return {"message": "Post successfully published",
+                'post': post.__dict__}
+    else:
+        raise HTTPException(status_code=401, detail="Error while authenticating message")
 
 
 class FollowAPI(BaseModel):
@@ -114,6 +129,17 @@ async def unfollow(follow: FollowAPI):
     user.following.remove(follow.target_username)
     user_manager.setUser(server, user.username, user)
     return {"message": "User successfully unfollowed"}
+
+    # Check if user exists
+    userToFollow = user_manager.getUser(server, follow.userToFollow)
+
+    if userToFollow is None:
+        raise HTTPException(status_code=404, detail="User to follow not found")
+
+    # Add username to followers
+    user.following.append(follow.userToFollow)
+    user_manager.setUser(server, user.username, user)
+    return {"message": "User successfully followed"}
 
 @api.get("/hello")
 async def main():
