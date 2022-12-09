@@ -9,7 +9,6 @@ export function Following() {
     let op = useRef(null);
 
     const [users, setUsers] = useState(Context.user.following);
-    console.log(users);
 
     const [usernameToFollow, setUsernameToFollow] = useState('');
     const followUser = () => {
