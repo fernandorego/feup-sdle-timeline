@@ -42,8 +42,8 @@ async def login(login: LoginAPI):
     # TODO: timeline
     # timeline = user_manager.getTimeline(user)
     return {"message": "Login successful as " + login.username,
-            'user': json.dumps(user.__dict__, default=vars),
-            'timeline': json.dumps(user.toJson()['timeline'], default=vars)}
+            'user': user.__dict__,
+            'timeline': user.toJson()['timeline']}
 
 class PostAPI(BaseModel):
     username: str
@@ -56,31 +56,56 @@ async def createPost(post: PostAPI):
         raise HTTPException(status_code=404, detail="User not logged in")
 
     post = Post(post.post)
-    user.posts.append(post)
+    user.posts.insert(0, post)
     user_manager.setUser(server, user.username, user)
-    return {"message": "Post successfully published"}
+    return {"message": "Post successfully published",
+            'post': post.__dict__}
 
 
 class FollowAPI(BaseModel):
     username: str
-    userToFollow: str
+    target_username: str
 
-@api.post("/follow/") # TODO: need testing
-async def follow(follow: PostAPI):
+@api.post("/follow/")
+async def follow(follow: FollowAPI):
+    if follow.target_username == follow.username:
+        raise HTTPException(status_code=400, detail="Cannot follow yourself")
+
     user = user_manager.getUser(server, follow.username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
 
+    if(follow.target_username in user.following):
+        raise HTTPException(status_code=400, detail="User already followed")
     # Check if user exists
-    userToFollow = user_manager.getUser(server, follow.userToFollow)
+    userToFollow = user_manager.getUser(server, follow.target_username)
 
     if userToFollow is None:
         raise HTTPException(status_code=404, detail="User to follow not found")
 
     # Add username to followers
-    user.following.append(follow.userToFollow)
+    user.following.append(follow.target_username)
     user_manager.setUser(server, user.username, user)
     return {"message": "User successfully followed"}
+
+@api.post('/unfollow/')
+async def unfollow(follow: FollowAPI):
+    user = user_manager.getUser(server, follow.username)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not logged in")
+
+    if(follow.target_username not in user.following):
+        raise HTTPException(status_code=400, detail="User not followed")
+    # Check if user exists
+    userToUnfollow = user_manager.getUser(server, follow.target_username)
+
+    if userToUnfollow is None:
+        raise HTTPException(status_code=404, detail="User to unfollow not found")
+
+    # Add username to followers
+    user.following.remove(follow.target_username)
+    user_manager.setUser(server, user.username, user)
+    return {"message": "User successfully unfollowed"}
 
 @api.get("/hello")
 async def main():

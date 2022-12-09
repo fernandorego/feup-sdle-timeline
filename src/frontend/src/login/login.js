@@ -17,8 +17,8 @@ export default function Login({ setUsername }) {
 		postRequest(url, {
 			username: username,
 		}).then((res) => {
-            Context.user = JSON.parse(res.user);
-            Context.user.timeline = JSON.parse(res.timeline)
+            Context.user = res.user;
+            Context.user.timeline = res.timeline;
 			Context.toast.current.show({
 				severity: "success",
 				summary: res.message,
@@ -36,7 +36,7 @@ export default function Login({ setUsername }) {
                         <h5>Username</h5>
                         <InputText value={username} onChange={(e) => setName(e.target.value)} />
                     </div>
-                    <div className="d-flex h-100 justify-content-center align-items-center">
+                    <div className="d-flex h-100 justify-content-center align-items-center mt-2">
                         <Button type="submit" label="Submit" />
                     </div>
                 </form>

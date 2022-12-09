@@ -1,6 +1,6 @@
 import { React, useState } from 'react';
 import { Menubar } from 'primereact/menubar';
-import { Button } from 'primereact/button';
+import { Following } from '../following/Following';
 import { InputText } from 'primereact/inputtext';
 import { Context } from '../context/context';
 export default function Navbar() {
@@ -37,7 +37,9 @@ export default function Navbar() {
                     value={state.serverUrl} />
             }
             
-            end={<Button label={state.username} disabled/>}
+            end={
+                Context.user == null ? <></> : <Following />
+            }
         />
     );
 
