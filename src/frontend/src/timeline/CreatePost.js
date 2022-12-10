@@ -16,7 +16,8 @@ export const CreatePostForm = (props) => {
 			post: value,
 		}).then((res) => {
 			console.log(res);
-			setTimeline([res.post, ...timeline]);
+			console.log(timeline);
+			setTimeline([res.post, ...timeline.timeline]);
 			Context.toast.current.show({
 				severity: "success",
 				summary: res.message,

@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from kademlia.network import Server
 import controller.user_manager as user_manager
 from model.post import Post
-import json
 import uvicorn
 from datetime import datetime
 
@@ -41,9 +40,12 @@ async def login(login: LoginAPI):
     user = user_manager.getOrCreateUser(server, username)
     # TODO: timeline
     # timeline = user_manager.getTimeline(user)
+    print()
+    print('user ========================')
+    print(user.timeline.toJson())
     return {"message": "Login successful as " + login.username,
             'user': user.__dict__,
-            'timeline': user.toJson()['timeline']}
+            'timeline': user.timeline.toJson()}
 
 class PostAPI(BaseModel):
     username: str
@@ -55,9 +57,9 @@ async def createPost(post: PostAPI):
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
 
-    post = Post(post.post)
-    user.posts.insert(0, post)
+    user.addPost(Post(post.post))
     user_manager.setUser(server, user.username, user)
+    print(post.__dict__)
     return {"message": "Post successfully published",
             'post': post.__dict__}
 
