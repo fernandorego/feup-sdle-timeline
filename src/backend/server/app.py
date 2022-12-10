@@ -38,9 +38,7 @@ async def login(login: LoginAPI):
     global server
     username = login.username
     user = user_manager.getOrCreateUser(server, username)
-    user.addPostsTimeline(user.posts)
-    # TODO: timeline
-    # timeline = user_manager.getTimeline(user)
+    user_manager.setTimeline(server, user)
     return {"message": "Login successful as " + login.username,
             'user': user.__dict__,
             'timeline': user.timeline.toJson()}

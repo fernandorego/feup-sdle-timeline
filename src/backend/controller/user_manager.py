@@ -10,7 +10,6 @@ def getOrCreateUser(server : Server, username : str) :
         
     else:
         user = User.fromJson(user_json)
-        # TODO add timeline
     return user
 
 def getUser(server : Server, username : str) :
@@ -21,3 +20,9 @@ def getUser(server : Server, username : str) :
 
 def setUser(server : Server, username : str, user : User) :
     set_dht_value(server, username, user)
+
+def setTimeline(server : Server, user : User) :
+    user.addPostsTimeline(user.posts)
+    for username in user.following:
+        u = getUser(server, username)
+        user.addPostsTimeline(u.posts)
