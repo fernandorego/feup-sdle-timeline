@@ -38,11 +38,9 @@ async def login(login: LoginAPI):
     global server
     username = login.username
     user = user_manager.getOrCreateUser(server, username)
+    user.addPostsTimeline(user.posts)
     # TODO: timeline
     # timeline = user_manager.getTimeline(user)
-    print()
-    print('user ========================')
-    print(user.timeline.toJson())
     return {"message": "Login successful as " + login.username,
             'user': user.__dict__,
             'timeline': user.timeline.toJson()}
@@ -57,9 +55,10 @@ async def createPost(post: PostAPI):
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
 
-    user.addPost(Post(post.post))
+    post = Post(post.post)
+    user.addPost(post)
+    # No need to add post to timeline
     user_manager.setUser(server, user.username, user)
-    print(post.__dict__)
     return {"message": "Post successfully published",
             'post': post.__dict__}
 

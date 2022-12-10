@@ -11,16 +11,14 @@ class User:
     def addPostsTimeline(self, posts):
         self.timeline.addPosts(posts)
 
+    def addPostTimeline(self, post : Post):
+        self.timeline.addPosts([post])
+
     def addPost(self, post : Post):
         self.posts.append(post)
-        self.timeline.addPosts([post])
-        print()
-        print('timeline ========================')
-        print([post.toJson() for post in self.posts])
-        print(self.timeline.posts)
 
     def fromJson(json):
-        user = User(json['username'])
+        user = User(username=json['username'])
         user.password = json['password']
         user.posts = [Post(post['post'], post['timestamp']) for post in json['posts']]
         user.following = json['following']

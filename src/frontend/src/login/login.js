@@ -18,7 +18,7 @@ export default function Login({ setUsername }) {
 			username: username,
 		}).then((res) => {
             Context.user = res.user;
-            Context.user.timeline = res.timeline;
+            Context.user.timeline = res.timeline.timeline;
 			Context.toast.current.show({
 				severity: "success",
 				summary: res.message,

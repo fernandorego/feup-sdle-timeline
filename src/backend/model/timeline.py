@@ -7,7 +7,6 @@ class Timeline:
         for i in range(len(posts)):
             self.posts.append(posts[i])
         self.posts.sort(key=lambda post: post.timestamp, reverse=True)
-        print(self.posts)
 
     def fromJson(json):
         timeline = Timeline()
