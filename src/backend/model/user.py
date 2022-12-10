@@ -20,7 +20,7 @@ class User:
     def fromJson(json):
         user = User(username=json['username'])
         user.password = json['password']
-        user.posts = [Post(post['post'], post['timestamp']) for post in json['posts']]
+        user.posts = [Post(post['post'], post['username'], post['timestamp']) for post in json['posts']]
         user.following = json['following']
         return user
 

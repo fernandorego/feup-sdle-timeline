@@ -53,7 +53,7 @@ async def createPost(post: PostAPI):
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
 
-    post = Post(post.post)
+    post = Post(post.post, user.username)
     user.addPost(post)
     # No need to add post to timeline
     user_manager.setUser(server, user.username, user)

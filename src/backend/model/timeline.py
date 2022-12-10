@@ -10,7 +10,7 @@ class Timeline:
 
     def fromJson(json):
         timeline = Timeline()
-        timeline.posts = [Post(post['post'], post['timestamp']) for post in json['posts']]
+        timeline.posts = [Post(post['post'], post['username'], post['timestamp']) for post in json['posts']]
         return timeline
 
     def toJson(self):
