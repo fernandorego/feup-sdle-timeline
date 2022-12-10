@@ -4,9 +4,10 @@ import { Button } from "primereact/button";
 import { Context } from "../context/context";
 import { postRequest } from "./../api/api";
 
-export const CreatePostForm = () => {
+export const CreatePostForm = (props) => {
 	const [value, setValue] = useState("");
-
+	const setTimeline = props.setTimeline;
+	const timeline = props.timeline;
 	const handleSubmit = (event) => {
         event.preventDefault();
 		const url = Context.serverUrl + "/posts/create";
@@ -14,6 +15,8 @@ export const CreatePostForm = () => {
 			username: Context.username,
 			post: value,
 		}).then((res) => {
+			console.log(res);
+			setTimeline([res.post, ...timeline]);
 			Context.toast.current.show({
 				severity: "success",
 				summary: res.message,

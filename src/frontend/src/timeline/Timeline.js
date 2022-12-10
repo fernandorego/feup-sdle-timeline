@@ -1,9 +1,9 @@
-import { React } from 'react';
+import { React, useState } from 'react';
 import { CreatePostForm } from "./CreatePost";
 import { Context } from "./../context/context";
 import { Post } from "./Post";
 export default function Timeline() {
-    const timeline = Context.user.timeline;
+    const [timeline, setTimeline] = useState(Context.user.timeline);
     let timelineComponent = <> </>;
     if (timeline.length > 0) {
         timelineComponent = (
@@ -15,7 +15,7 @@ export default function Timeline() {
     return (
         <div className="w-100 h-100 d-flex flex-column  justify-content-start align-items-center">
             <div className="col-4">
-                <CreatePostForm />
+                <CreatePostForm setTimeline={setTimeline} timeline={timeline}/>
             </div>
             <div className="w-100 d-flex align-items-center flex-column ">
                 <h1 className='mt-4 p-text-secondary'>Timeline</h1>
