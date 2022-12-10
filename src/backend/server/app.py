@@ -48,19 +48,19 @@ async def login(login: LoginAPI):
     # User already created 
     elif private_key == None:
         return {"message": "Login successful as " + login.username,
-                'user': json.dumps(user.__dict__, default=vars),
-                'timeline': json.dumps(user.toJson()['timeline'], default=vars)}
+                'user': user.__dict__,
+                'timeline': user.toJson()['timeline']}
     else:
         # TODO: timeline
         # timeline = user_manager.getTimeline(user)
         return {"message": "Login successful as " + login.username,
-                'user': json.dumps(user.__dict__, default=vars),
-                'timeline': json.dumps(user.toJson()['timeline'], default=vars),
+                'user': user.__dict__,
+                'timeline': user.toJson()['timeline'],
                 'private_key': private_key.decode(encoding='utf-8')}
 
 class PostAPI(BaseModel):
     username: str
-    private_key : str
+    signature : str
     post: str
 
 @api.post("/posts/create/")
@@ -71,9 +71,7 @@ async def createPost(post: PostAPI):
 
     # Is post authentic (hammer-time should be signed in the front-end if we have time we will do it)
 
-    signature = pki.sign_message(post.post,post.private_key)
-
-    verify_signature = pki.verify_signature(post.post, user.public_key, signature)
+    verify_signature = pki.verify_signature(post.post, user.public_key, post.signature)
 
     if verify_signature:
         post = Post(post.post)
