@@ -26,6 +26,7 @@ function App(props) {
 	if (!username) {
 		return <div className="App h-100 w-100">
 			<Navbar />
+			<Toast ref={toast} position="bottom-right"/>
 			<BlockUI
 				blocked={blockedPanel}
 				className="h-100 w-100"
@@ -39,7 +40,6 @@ function App(props) {
 				}
 				fullScreen
 			>
-					<Toast ref={toast} />
 					<div className="h-100 w-100 d-flex justify-content-center align-items-center">
 						<Login username={Context.username} setUsername={setUsername} />
 					</div>
@@ -50,7 +50,7 @@ function App(props) {
 	return (
 		<div className="App h-100 w-100">
 			<Navbar />
-			<Toast ref={toast} />
+			<Toast ref={toast} position="bottom-right"/>
 			<BlockUI
 				blocked={blockedPanel}
 				className="h-100 w-100"

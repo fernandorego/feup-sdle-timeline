@@ -86,7 +86,7 @@ async def follow(follow: FollowAPI):
     # Add username to followers
     user.following.append(follow.target_username)
     user_manager.setUser(server, user.username, user)
-    return {"message": "User successfully followed"}
+    return {"message": "User " + follow.target_username + " successfully followed"}
 
 @api.post('/unfollow/')
 async def unfollow(follow: FollowAPI):
@@ -105,7 +105,7 @@ async def unfollow(follow: FollowAPI):
     # Add username to followers
     user.following.remove(follow.target_username)
     user_manager.setUser(server, user.username, user)
-    return {"message": "User successfully unfollowed"}
+    return {"message": "User " + follow.target_username + " successfully unfollowed"}
 
 @api.get("/hello")
 async def main():

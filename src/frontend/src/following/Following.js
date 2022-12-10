@@ -42,8 +42,7 @@ export function Following() {
         <>
             <Button type="button"
                 onClick={(e) => op.current.toggle(e)}>
-                <i className="pi pi-fw pi-user"></i>
-                <span className="p-ml-2">Following</span>
+                <span className="p-ml-2">My Followers</span>
             </Button>
             <OverlayPanel
                 ref={op}>

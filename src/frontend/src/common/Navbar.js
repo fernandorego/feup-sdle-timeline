@@ -3,6 +3,7 @@ import { Menubar } from 'primereact/menubar';
 import { Following } from '../following/Following';
 import { InputText } from 'primereact/inputtext';
 import { Context } from '../context/context';
+import { Button } from 'primereact/button';
 export default function Navbar() {
 
     const [state, setState] = useState({
@@ -38,7 +39,7 @@ export default function Navbar() {
             }
             
             end={
-                Context.user == null ? <></> : <Following />
+                Context.user == null ? <></> : <div><Following /><Button className='mx-3' icon="pi pi-fw pi-user" label={Context.username} disabled></Button></div>
             }
         />
     );
