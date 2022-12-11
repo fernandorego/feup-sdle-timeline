@@ -1,4 +1,5 @@
 export const showConfirm = () => {
+    toastBC.current.dismiss();
     toastBC.current.show({ severity: 'info', sticky: true, content: (
         <div className="flex flex-column" style={{flex: '1'}}>
             <div className="text-center">
