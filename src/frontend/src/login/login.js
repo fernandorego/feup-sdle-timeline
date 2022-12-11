@@ -13,7 +13,7 @@ export default function Login({ setUsername, setPrivate_key }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
+        console.log("key : "+Context.private_key);
         const url = Context.serverUrl + "/login";
 		postRequest(url, {
 			username: username,
@@ -28,7 +28,9 @@ export default function Login({ setUsername, setPrivate_key }) {
 				life: 3000,
 			});
             setUsername(username);
-            setPrivate_key(res.private_key)
+            setPrivate_key(res.private_key);
+            
+
 		});
 	};
 

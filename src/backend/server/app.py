@@ -43,6 +43,8 @@ async def login(login: LoginAPI):
     password = login.password
     user, private_key = user_manager.getOrCreateUser(server, username, password)
 
+    
+
     if user == None and private_key == None:
         raise HTTPException(status_code=401, detail="Invalid Password")
     # User already created 
@@ -65,13 +67,18 @@ class PostAPI(BaseModel):
 
 @api.post("/posts/create/")
 async def createPost(post: PostAPI):
+    print('signature')
+    print(post.signature.encode(encoding="ptcp154"))
+    print('here')
     user = user_manager.getUser(server, post.username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
 
     # Is post authentic (hammer-time should be signed in the front-end if we have time we will do it)
 
-    verify_signature = pki.verify_signature(post.post, user.public_key, post.signature)
+    verify_signature = pki.verify_signature(post.post, user.public_key, post.signature.encode(encoding="ptcp154"))
+
+    
 
     if verify_signature:
         post = Post(post.post)
@@ -142,3 +149,17 @@ async def unfollow(follow: FollowAPI):
 @api.get("/hello")
 async def main():
     return {"message": "Hello World"}
+
+
+class SignAPI(BaseModel):
+    privateKey: str
+    post: str
+
+@api.post("/sign")
+async def sign(follow: SignAPI):
+
+    result = pki.sign_message(message=follow.post , private_key= follow.privateKey)
+
+    print(result.decode(encoding="ptcp154"))
+
+    return {"signature":result.decode(encoding="ptcp154")}

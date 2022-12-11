@@ -2,27 +2,49 @@ import React, { useState } from "react";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { Context } from "../context/context";
-import { postRequest } from "./../api/api";
+import { getRequest, postRequest } from "./../api/api";
+
 
 export const CreatePostForm = (props) => {
 	const [value, setValue] = useState("");
 	const setTimeline = props.setTimeline;
 	const timeline = props.timeline;
+	var signature = "";
+
 	const handleSubmit = (event) => {
         event.preventDefault();
-		const url = Context.serverUrl + "/posts/create";
-		postRequest(url, {
-			username: Context.username,
-			post: value,
-		}).then((res) => {
-			console.log(res);
-			setTimeline([res.post, ...timeline]);
-			Context.toast.current.show({
-				severity: "success",
-				summary: res.message,
-				life: 3000,
-			});
-		});
+		const url = Context.serverUrl + "/posts/create/";
+		const signurl = Context.serverUrl +"/sign";
+
+		
+
+
+		postRequest(signurl,{
+			privateKey: Context.private_key,
+			post: value
+		}).then((result) =>{
+			signature = result.signature;
+			
+
+			postRequest(url, {
+						username: Context.username,
+						post: value,
+						signature: signature,
+					}).then((res) => {
+						
+						console.log(res);
+						setTimeline([res.post, ...timeline]);
+						Context.toast.current.show({
+							severity: "success",
+							summary: res.message,
+							life: 3000,
+						});
+				});
+		})
+
+		
+
+		
 	};
 
 	return (

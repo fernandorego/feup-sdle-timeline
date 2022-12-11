@@ -1,5 +1,5 @@
 from Crypto.PublicKey import RSA
-from Crypto.Signature.pkcs1_15 import PKCS115_SigScheme
+from Crypto.Signature import pkcs1_15
 from Crypto.Hash import SHA256
 
 def generate_PKI_key_pair():
@@ -26,12 +26,13 @@ def sign_message(message : str, private_key : str):
         and then sign the hashed message
         returns the message and the signature
     '''
-
+    
     message_enconded = message.encode(encoding= 'utf-8')
-
     hashed_message = SHA256.new(message_enconded)
+    
+    pk = RSA.import_key(private_key.encode(encoding='utf-8'))
 
-    signer = PKCS115_SigScheme(private_key)
+    signer = pkcs1_15.new(pk)
 
     signature = signer.sign(hashed_message)
 
@@ -47,7 +48,11 @@ def verify_signature(message: str, public_key : str, signature : bytes) -> bool:
 
     hashed_message = SHA256.new(message_encoded)
 
-    verifier = PKCS115_SigScheme(public_key)
+    print(public_key)
+
+    key = RSA.import_key(public_key.encode(encoding='utf-8'))
+
+    verifier = pkcs1_15.new(key)
 
     try:
         verifier.verify(hashed_message, signature)
