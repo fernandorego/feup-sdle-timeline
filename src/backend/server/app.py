@@ -6,9 +6,12 @@ import controller.user_manager as user_manager
 from model.post import Post
 import uvicorn
 from datetime import datetime
+from timer.repeatTimer import RepeatTimer, check_new_data
+
 
 api = FastAPI()
 server = None
+active_users = {}
 
 api.add_middleware(
     CORSMiddleware,
@@ -23,6 +26,10 @@ def start_api(ip : str, port : int, server_arg : Server):
     server = server_arg
     print('server ========================')
     print(server)
+
+    timer = RepeatTimer(5,check_new_data,[active_users, server])
+    timer.daemon = True
+    timer.start()
     
     uvicorn.run(api, host=ip, port=port)
               
@@ -39,6 +46,7 @@ async def login(login: LoginAPI):
     username = login.username
     user = user_manager.getOrCreateUser(server, username)
     user_manager.setTimeline(server, user)
+    active_users[username] = [post.toJson()['timestamp'] for post in user.posts]
     return {"message": "Login successful as " + login.username,
             'user': user.__dict__,
             'timeline': user.timeline.toJson()}
@@ -55,6 +63,7 @@ async def createPost(post: PostAPI):
 
     post = Post(post.post, user.username)
     user.addPost(post)
+    active_users[user.username].append(post.timestamp)
     # No need to add post to timeline
     user_manager.setUser(server, user.username, user)
     return {"message": "Post successfully published",
