@@ -1,16 +1,29 @@
+import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { Context } from "../context/context";
+import { postRequest } from '../api/api';
 
-const handleYes = () => {
-    // TODO: send request to refresh timeline
+const HandleYes = () => {
+    const [timeline, setTimeline] = useState(Context.user.timeline);
+    Context.warning = false;
+    const url = Context.serverUrl + "/refresh-timeline";
+    postRequest(url, {
+        username: Context.user.username,
+    }).then((res) => {
+        setTimeline(res.timeline)
+        Context.toast.current.show({
+            severity: "success",
+            summary: res.message,
+            life: 3000,
+        });
+    });
+}
+
+const HandleNo = () => {
     Context.warning = false;
 }
 
-const handleNo = () => {
-    Context.warning = false;
-}
-
-export const showRefreshToast = (toastConfirm) => {
+export const ShowRefreshToast = (toastConfirm) => {
     toastConfirm.current.show({ severity: 'info', sticky: true, content: (
         <div className="flex flex-column" style={{flex: '1'}}>
             <div className="text-center">
@@ -20,10 +33,10 @@ export const showRefreshToast = (toastConfirm) => {
             </div>
             <div className="grid p-fluid">
                 <div className="col-6">
-                    <Button type="button" label="Yes" onClick={handleYes} className="p-button-success" />
+                    <Button type="button" label="Yes" onClick={HandleYes} className="p-button-success" />
                 </div>
                 <div className="col-6">
-                    <Button type="button" label="No" onClick={handleNo} className="p-button-secondary" />
+                    <Button type="button" label="No" onClick={HandleNo} className="p-button-secondary" />
                 </div>
             </div>
         </div>

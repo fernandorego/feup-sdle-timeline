@@ -10,7 +10,7 @@ import { BlockUI } from "primereact/blockui";
 import Timeline from "./timeline/Timeline";
 import Login from "./login/login";
 import { Toast } from 'primereact/toast';
-import { showRefreshToast } from "./timeline/ShowRefresh"
+import { ShowRefreshToast } from "./timeline/ShowRefresh"
 
 function App(props) {
 	const isLoggedIn = props.isLoggedIn;
@@ -54,7 +54,7 @@ function App(props) {
 	source.onmessage = e => {
 		if (Context.warning == false) {
 			Context.warning = true;
-			showRefreshToast(toastConfirm)
+			ShowRefreshToast(toastConfirm)
 		}
 	}
 
