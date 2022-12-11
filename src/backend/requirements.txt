@@ -1,2 +1,5 @@
 kademlia
+pycryptodome
+bcrypt
 fastapi[all]
+

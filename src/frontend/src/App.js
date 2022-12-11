@@ -11,6 +11,7 @@ import Timeline from "./timeline/Timeline";
 import Login from "./login/login";
 import { Toast } from 'primereact/toast';
 
+
 function App(props) {
 	const isLoggedIn = props.isLoggedIn;
 
@@ -23,6 +24,9 @@ function App(props) {
 
 	const [username, setUsername] = useState();
 	Context.username = username;
+
+	const [private_key, setPrivate_key] = useState();
+	Context.private_key = private_key;
 
 	if (!username) {
 		return <div className="App h-100 w-100">
@@ -42,7 +46,7 @@ function App(props) {
 				fullScreen
 			>
 					<div className="h-100 w-100 d-flex justify-content-center align-items-center">
-						<Login username={Context.username} setUsername={setUsername} />
+						<Login username={Context.username} setUsername={setUsername} private_key={Context.private_key} setPrivate_key={setPrivate_key} />
 					</div>
 			</BlockUI>
 		</div>

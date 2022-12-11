@@ -1,9 +1,11 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Response, status, Response, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from kademlia.network import Server
 import controller.user_manager as user_manager
 from model.post import Post
+import server.pki as pki
+import json
 import uvicorn
 import asyncio
 from timer.repeatTimer import RepeatTimer, check_new_data
@@ -41,32 +43,56 @@ async def main():
 
 class LoginAPI(BaseModel):
     username: str
+    password: str
 
 @api.post("/login/")
 async def login(login: LoginAPI):
     global server
     username = login.username
-    user = user_manager.getOrCreateUser(server, username)
+    password = login.password
+    user, private_key = user_manager.getOrCreateUser(server, username, password)
+
+
     user_manager.setTimeline(server, user)
     active_users[username] = [post.toJson()['timestamp'] for post in user.posts]
-    return {"message": "Login successful as " + login.username,
-            'user': user.__dict__,
-            'timeline': user.timeline.toJson()}
+
+    if user == None and private_key == None:
+        raise HTTPException(status_code=401, detail="Invalid Password")
+    
+    # User already created 
+    elif private_key == None:
+        return {"message": "Login successful as " + login.username,
+                'user': user.__dict__,
+                'timeline': user.timeline.toJson()}
+    else:
+        return {"message": "Login successful as " + login.username,
+                'user': user.__dict__,
+                'timeline': user.timeline.toJson(),
+                'private_key': private_key.decode(encoding='utf-8')}
 
 class PostAPI(BaseModel):
     username: str
+    signature : str
     post: str
 
 @api.post("/posts/create/")
 async def createPost(post: PostAPI):
+    print('signature')
+    print(post.signature.encode(encoding="ptcp154"))
+    print('here')
     user = user_manager.getUser(server, post.username)
     if user is None:
         raise HTTPException(status_code=404, detail="User not logged in")
 
+    # Is post authentic (hammer-time should be signed in the front-end if we have time we will do it)
+    verify_signature = pki.verify_signature(post.post, user.public_key, post.signature.encode(encoding="ptcp154"))
+    
+    if not verify_signature:
+        raise HTTPException(status_code=401, detail="Error while authenticating message")
+
     post = Post(post.post, user.username)
     user.addPost(post)
     active_users[user.username].append(post.timestamp)
-    # No need to add post to timeline
     user_manager.setUser(server, user.username, user)
     return {"message": "Post successfully published",
             'post': post.__dict__}
@@ -126,10 +152,18 @@ async def unfollow(follow: FollowAPI):
     user_manager.setUser(server, user.username, user)
     return {"message": "User " + follow.target_username + " successfully unfollowed"}
 
-@api.get("/hello")
-async def main():
-    return {"message": "Hello World"}
+class SignAPI(BaseModel):
+    privateKey: str
+    post: str
 
+@api.post("/sign")
+async def sign(follow: SignAPI):
+
+    result = pki.sign_message(message=follow.post , private_key= follow.privateKey)
+
+    print(result.decode(encoding="ptcp154"))
+
+    return {"signature":result.decode(encoding="ptcp154")}
 
 STREAM_DELAY = 1  # second
 RETRY_TIMEOUT = 15000  # milisecond
@@ -152,3 +186,4 @@ async def message_stream(username:str, request: Request):
             await asyncio.sleep(STREAM_DELAY)
 
     return EventSourceResponse(event_generator(username))
+

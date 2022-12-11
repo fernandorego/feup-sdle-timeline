@@ -1,9 +1,10 @@
 from model.post import Post
 from model.timeline import Timeline
 class User:
-    def __init__(self, username : str, password : str = ''):
+    def __init__(self, username : str, public_key : str, password : str):
         self.username = username
-        self.password = password # ignored for now
+        self.password = password
+        self.public_key = public_key
         self.posts = []
         self.following = []
         self.timeline = Timeline()
@@ -18,9 +19,9 @@ class User:
         self.posts.append(post)
 
     def fromJson(json):
-        user = User(username=json['username'])
-        user.password = json['password']
+        user = User(json['username'], json['public_key'], json['password'])
         user.posts = [Post(post['post'], post['username'], post['timestamp']) for post in json['posts']]
+        
         user.following = json['following']
         return user
 
@@ -28,6 +29,7 @@ class User:
         return {
             'username': self.username,
             'password': self.password,
+            'public_key' : self.public_key,
             'posts': [post.toJson() for post in self.posts],
             'following': self.following
         }
