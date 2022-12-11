@@ -7,24 +7,20 @@ import bcrypt
 
 def getOrCreateUser(server : Server, username : str, password : str):
     user_json = get_dht_value(server, username)
+    public_key, private_key = pki.generate_PKI_key_pair()
     if user_json is None:
-        public_key, private_key = pki.generate_PKI_key_pair()
-
         salt = bcrypt.gensalt()
         psw = bcrypt.hashpw(password.encode(encoding='utf-8'),salt)
-
         user = User(username, public_key.decode(encoding='utf-8'), psw.decode(encoding='utf-8'))
-        
         set_dht_value(server, username, user)
     else:
-        private_key = None
         user = User.fromJson(user_json)
-
         if(not bcrypt.checkpw( password.encode(encoding='utf-8'),user.password.encode(encoding='utf-8'))):
             print('User password does not match')
             user = None
             return user, private_key
-            
+        user.public_key = public_key.decode(encoding='utf-8')
+        set_dht_value(server, username, user)
         # TODO add timeline
     return user, private_key
 

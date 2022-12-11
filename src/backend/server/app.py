@@ -59,16 +59,10 @@ async def login(login: LoginAPI):
     if user == None and private_key == None:
         raise HTTPException(status_code=401, detail="Invalid Password")
     
-    # User already created 
-    elif private_key == None:
-        return {"message": "Login successful as " + login.username,
-                'user': user.__dict__,
-                'timeline': user.timeline.toJson()}
-    else:
-        return {"message": "Login successful as " + login.username,
-                'user': user.__dict__,
-                'timeline': user.timeline.toJson(),
-                'private_key': private_key.decode(encoding='utf-8')}
+    return {"message": "Login successful as " + login.username,
+            'user': user.__dict__,
+            'timeline': user.timeline.toJson(),
+            'private_key': private_key.decode(encoding='utf-8')}
 
 class PostAPI(BaseModel):
     username: str
