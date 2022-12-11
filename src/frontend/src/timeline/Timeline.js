@@ -9,7 +9,7 @@ export default function Timeline(props) {
     const toastConfirm = props.toastConfirm;
     let source = Context.source;
     if(Context.source == undefined){
-        source = new EventSource('http://localhost:5000/update/' + Context.username);
+        source = new EventSource(`${Context.serverUrl}/update/` + Context.username);
         Context.source = source;
     }
 	const [timeline, setTimeline] = useState(Context.user.timeline);
