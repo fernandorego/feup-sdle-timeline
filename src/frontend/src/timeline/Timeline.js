@@ -7,15 +7,20 @@ import { ShowRefreshToast } from "./ShowRefresh"
 export default function Timeline(props) {
 
     const toastConfirm = props.toastConfirm;
-    const source = new EventSource('http://localhost:5000/update/' + Context.username);
-	source.onmessage = e => {
+    let source = Context.source;
+    if(Context.source == undefined){
+        source = new EventSource('http://localhost:5000/update/' + Context.username);
+        Context.source = source;
+    }
+	const [timeline, setTimeline] = useState(Context.user.timeline);
+    source.onmessage = e => {
 		if (Context.warning == false) {
 			Context.warning = true;
             ShowRefreshToast(toastConfirm, setTimeline);
 		}
 	}
 
-    const [timeline, setTimeline] = useState(Context.user.timeline);
+    
     let timelineComponent = <> </>;
     if (timeline.length > 0) {
         timelineComponent = (
