@@ -175,8 +175,6 @@ async def message_stream(username:str, request: Request):
 
             if await request.is_disconnected():
                 break
-            print('newPosts.get ' + username)
-            print('newposts = ' , newPosts)
             if newPosts.get(username, False):
                 newPosts[username] = False
                 yield {
