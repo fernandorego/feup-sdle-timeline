@@ -1,7 +1,6 @@
 from threading import Timer
 import requests
 import controller.user_manager as user_manager
-import socketio
 
 class RepeatTimer(Timer):
     def run(self):  
@@ -35,11 +34,16 @@ def check_new_data(active_users_arg, server_arg, new_posts_arg):
             user_timestamps += [post.toJson()['timestamp'] for post in following_user.posts]
 
         if (len(user_timestamps) != len(active_users[key])):
+            active_users[key] = user_timestamps + []
             new_posts[user.username] = True
         else:
             for i in range(len(user_timestamps)):
-                if user_timestamps[i] in active_users[key]:
+                if user_timestamps[i] in active_users[key] and not new_posts.get(user.username, False):
+                    print('continue ' + user.username)
                     continue
+                active_users[key] = user_timestamps + []
                 new_posts[user.username] = True
                 break
+    print('done refreshing data')
+    print(new_posts)
             

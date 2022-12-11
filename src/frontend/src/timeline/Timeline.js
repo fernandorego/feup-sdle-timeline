@@ -1,14 +1,26 @@
-import { React, useState } from 'react';
+import { React, useState, useRef } from 'react';
 import { CreatePostForm } from "./CreatePost";
 import { Context } from "./../context/context";
 import { Post } from "./Post";
-export default function Timeline() {
+import { Toast } from 'primereact/toast';
+import { ShowRefreshToast } from "./ShowRefresh"
+export default function Timeline(props) {
+
+    const toastConfirm = props.toastConfirm;
+    const source = new EventSource('http://localhost:5000/update/' + Context.username);
+	source.onmessage = e => {
+		if (Context.warning == false) {
+			Context.warning = true;
+            ShowRefreshToast(toastConfirm, setTimeline);
+		}
+	}
+
     const [timeline, setTimeline] = useState(Context.user.timeline);
     let timelineComponent = <> </>;
     if (timeline.length > 0) {
         timelineComponent = (
-            timeline.map((post) =>
-                <Post post={post} />
+            timeline.map((post, i) =>
+                <Post key={`post-${i}`} post={post} />
             )
         );
     }

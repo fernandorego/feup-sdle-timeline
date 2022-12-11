@@ -2,7 +2,6 @@ import argparse
 import logging
 import asyncio
 import threading
-import time
 
 from kademlia.network import Server
 from server.app import start_api

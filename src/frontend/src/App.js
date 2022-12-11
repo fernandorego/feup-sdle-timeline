@@ -10,15 +10,13 @@ import { BlockUI } from "primereact/blockui";
 import Timeline from "./timeline/Timeline";
 import Login from "./login/login";
 import { Toast } from 'primereact/toast';
-import { ShowRefreshToast } from "./timeline/ShowRefresh"
 
 function App(props) {
 	const isLoggedIn = props.isLoggedIn;
 
 	const toast = useRef(null);
-	Context.toast = toast;
-
 	const toastConfirm = useRef(null);
+	Context.toast = toast;
 
 	const [blockedPanel, setBlockUI] = useState(false);
 	Context.setBlockUI = setBlockUI;
@@ -50,13 +48,7 @@ function App(props) {
 		</div>
 	}
 
-	const source = new EventSource('http://localhost:5000/update/' + Context.username)
-	source.onmessage = e => {
-		if (Context.warning == false) {
-			Context.warning = true;
-			ShowRefreshToast(toastConfirm)
-		}
-	}
+	
 
 	return (
 		<div className="App h-100 w-100">
@@ -76,7 +68,7 @@ function App(props) {
 				}
 				fullScreen
 			>
-				<Timeline />
+				<Timeline toastConfirm={toastConfirm}/>
 			</BlockUI>
 		</div>
 	);

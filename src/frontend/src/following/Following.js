@@ -52,7 +52,7 @@ export function Following() {
                     </div>
                     <div className="p-col-12 d-flex flex-column">
                         {users.map((user) =>
-                            <div className="col-12 d-flex">
+                            <div key={user} className="col-12 d-flex">
                                 <div key={user} className="col-10 py-1">
                                     User:{user}
                                 </div>

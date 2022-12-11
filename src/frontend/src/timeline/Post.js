@@ -1,7 +1,8 @@
 export function Post(props) {
     const post = props.post;
+    
     return (
-        <div key={post.post} className="card mt-4">
+        <div  className="card mt-4">
             <div className="card-title m-0">
                 <h5>{post.username}</h5>
             </div>

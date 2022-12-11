@@ -98,6 +98,15 @@ async def follow(follow: FollowAPI):
     user_manager.setUser(server, user.username, user)
     return {"message": "User " + follow.target_username + " successfully followed"}
 
+@api.get('/refresh-timeline/{username}')
+async def refreshTimeline(username: str):
+    user = user_manager.getUser(server, username)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not logged in")
+    user_manager.setTimeline(server, user)
+    return {"message": "Timeline successfully refreshed",
+            'timeline': user.timeline.toJson()}
+
 @api.post('/unfollow/')
 async def unfollow(follow: FollowAPI):
     user = user_manager.getUser(server, follow.username)
@@ -126,17 +135,20 @@ STREAM_DELAY = 1  # second
 RETRY_TIMEOUT = 15000  # milisecond
 
 @api.get('/update/{username}')
-async def message_stream(username:str):
-    
-    async def event_generator():
+async def message_stream(username:str, request: Request):
+    async def event_generator(username):
         while True:
+
+            if await request.is_disconnected():
+                break
+            print('newPosts.get ' + username)
+            print('newposts = ' , newPosts)
             if newPosts.get(username, False):
                 newPosts[username] = False
                 yield {
                         "data": "update"
                 }
-                return
 
             await asyncio.sleep(STREAM_DELAY)
 
-    return EventSourceResponse(event_generator())
+    return EventSourceResponse(event_generator(username))
