@@ -1,17 +1,19 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from kademlia.network import Server
 import controller.user_manager as user_manager
 from model.post import Post
 import uvicorn
-from datetime import datetime
+import asyncio
 from timer.repeatTimer import RepeatTimer, check_new_data
+from sse_starlette.sse import EventSourceResponse
 
 
 api = FastAPI()
 server = None
 active_users = {}
+newPosts = {}
 
 api.add_middleware(
     CORSMiddleware,
@@ -27,7 +29,7 @@ def start_api(ip : str, port : int, server_arg : Server):
     print('server ========================')
     print(server)
 
-    timer = RepeatTimer(5,check_new_data,[active_users, server])
+    timer = RepeatTimer(5,check_new_data,[active_users, server, newPosts])
     timer.daemon = True
     timer.start()
     
@@ -118,3 +120,23 @@ async def unfollow(follow: FollowAPI):
 @api.get("/hello")
 async def main():
     return {"message": "Hello World"}
+
+
+STREAM_DELAY = 1  # second
+RETRY_TIMEOUT = 15000  # milisecond
+
+@api.get('/update/{username}')
+async def message_stream(username:str):
+    
+    async def event_generator():
+        while True:
+            if newPosts.get(username, False):
+                newPosts[username] = False
+                yield {
+                        "data": "update"
+                }
+                return
+
+            await asyncio.sleep(STREAM_DELAY)
+
+    return EventSourceResponse(event_generator())
